@@ -36,7 +36,8 @@ class Sprite {
         //attack box
         if (this.isAttacking) {
         c.fillStyle = 'green'
-        c.fillRect(this.attackBox.position.x,
+        c.fillRect(
+            this.attackBox.position.x,
             this.attackBox.position.y,
             this.attackBox.width,
             this.attackBox.height)
@@ -55,13 +56,13 @@ class Sprite {
             this.velocity.y = 0
         } else
             this.velocity.y += gravity
-            }
+    }
 
-        attack() {
-            this.isAttacking = true
-            setTimeout(() => {
-                this.isAttacking = false
-            }, 100)
+    attack() {
+        this.isAttacking = true
+        setTimeout(() => {
+            this.isAttacking = false
+        }, 100)
     }
 }
 
@@ -75,7 +76,7 @@ const player = new Sprite({
         y: 0
     },
     offset: {
-        x: -50,
+        x: 0,
         y: 0
     }
 })
@@ -91,9 +92,14 @@ const enemy = new Sprite({
         x: 0,
         y: 0
     },
-    color: 'blue'
+    color: 'blue',
+    offset: {
+        x: -50,
+        y: 0
+    }
 })
 
+console.log(player)
 
 const keys = {
     a: {
@@ -117,7 +123,7 @@ const keys = {
 
 enemy.draw()
 
-function rectangularCollision({ rectangle1, rectangle2 }){
+function rectangularCollision({ rectangle1, rectangle2 }) {
     return (
         rectangle1.attackBox.position.x + rectangle1.attackBox.width >= rectangle2.position.x &&
         rectangle1.attackBox.position.x <= rectangle2.position.x + rectangle2.width &&
@@ -157,8 +163,19 @@ function animate() {
             rectangle2: enemy
         }) &&
         player.isAttacking) {
-            player.isAttacking = false
+        player.isAttacking = false
         console.log('go')
+    }
+
+    if (
+        rectangularCollision({
+            rectangle1: enemy,
+            rectangle2: player
+        }) &&
+        enemy.isAttacking
+    ) {
+        enemy.isAttacking = false
+        console.log('Enemy attack successful')
     }
 }
 
@@ -194,6 +211,10 @@ window.addEventListener('keydown', (event) => {
 
         case 'ArrowUp':
             enemy.velocity.y = -20
+            break;
+
+        case 'ArrowDown':
+            enemy.isAttacking = true
             break;
     }
 
